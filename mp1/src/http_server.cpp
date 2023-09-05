@@ -39,7 +39,7 @@ void *get_in_addr(struct sockaddr *sa)
 }
 
 void checkRequest(int client_fd, const std::string& request) {
-
+	
 	std::string header; //saves the HTTP header 
 
     std::istringstream curr_stream(request); //getting the stream 
