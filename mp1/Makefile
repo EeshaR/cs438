@@ -46,7 +46,36 @@ http_client: $(CLIENTOBJECTS)
 
 
 #RM is a built-in variable that defaults to "rm -f".
+clean :# If you use threads, add -pthread here.
+COMPILERFLAGS = -g -Wall -Wextra -Wno-sign-compare
+
+# Any libraries you might need linked in.
+# LINKLIBS = -lm
+
+# The components of each program. 
+SERVEROBJECTS = obj/http_server.o
+CLIENTOBJECTS = obj/http_client.o
+
+.PHONY: all clean
+
+all : obj http_server http_client
+
+http_server: $(SERVEROBJECTS)
+	$(CXX) $(COMPILERFLAGS) $^ -o $@ $(LINKLIBS)
+
+http_client: $(CLIENTOBJECTS)
+	$(CXX) $(COMPILERFLAGS) $^ -o $@ $(LINKLIBS)
+
 clean :
+	$(RM) obj/*.o http_server http_client
+
+# Note the change from src/%.c to src/%.cpp
+obj/%.o: src/%.cpp
+	$(CXX) $(COMPILERFLAGS) -c -o $@ $<
+
+obj:
+	mkdir -p obj
+
 	$(RM) obj/*.o http_server http_client
 
 #$<: the first dependency in the list; here, src/%.c. (Of course, we could also have used $^).
@@ -57,4 +86,3 @@ obj/%.o: src/%.c
 	$(CC) $(COMPILERFLAGS) -c -o $@ $<
 obj:
 	mkdir -p obj
-
