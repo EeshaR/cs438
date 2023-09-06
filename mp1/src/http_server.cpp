@@ -39,7 +39,7 @@ void *get_in_addr(struct sockaddr *sa)
 }
 
 void checkRequest(int client_fd, const std::string& request) {
-	
+
 	std::string header; //saves the HTTP header 
 
     std::istringstream curr_stream(request); //getting the stream 
@@ -51,8 +51,8 @@ void checkRequest(int client_fd, const std::string& request) {
     if (code == "GET") 
 	{
 		//creating an input file stream to read the given file 
-		int mode_type = std::ios::in | std::ios::binary; //open for reading in binary (not text) mode
-		std::ifstream get_file("." + file_path, mode_type); 
+		//int mode_type = std::ios::in | std::ios::binary; //open for reading in binary (not text) mode
+		std::ifstream get_file("." + file_path, std::ios::in | std::ios::binary);
 
 		//deciding the appropriate header 
         if (get_file) 
@@ -174,16 +174,15 @@ int main(int argc, char *argv[])
 
 			char buffer[512]; //TA mentioned passing in 512 byte chunks
             ssize_t bytes_received = recv(new_fd, buffer, sizeof(buffer) - 1, 0); //new_fd is file descriptor, buffer is where data will be stored, 
-            if (bytes_received <= 0) 
+            if (bytes_received > 0) 
 			{
-                perror("recv");
-            } 
-			else 
-			{
-                buffer[bytes_received] = '\0'; // null-terminate the string
+				buffer[bytes_received] = '\0'; 
                 std::string request(buffer); //make the buffer a string (memory issues?) 
                 checkRequest(new_fd, request);
-            }
+                
+            } 
+			else 
+				perror("issue with recv");
 			
 			close(new_fd);
 			exit(0);

@@ -26,7 +26,7 @@ all : obj http_server http_client
 #$^: the entire dependency string (after expansions); here, $(SERVEROBJECTS)
 #CC is a built in variable for the default C compiler; it usually defaults to "gcc". (CXX is g++).
 http_server: $(SERVEROBJECTS)
-	$(CC) $(COMPILERFLAGS) $^ -o $@ $(LINKLIBS)
+	$(CXX) $(COMPILERFLAGS) $^ -o $@ $(LINKLIBS)
 
 
 
@@ -40,49 +40,20 @@ http_server: $(SERVEROBJECTS)
 #In this case, CLIENTOBJECTS is just obj/client.o. So, if obj/client.o doesn't exist or is out of date, 
 #make will first look for a rule to build it. That rule is the 'obj/%.o' one, below; the % is a wildcard.
 http_client: $(CLIENTOBJECTS)
-	$(CC) $(COMPILERFLAGS) $^ -o $@ $(LINKLIBS)
+	$(CXX) $(COMPILERFLAGS) $^ -o $@ $(LINKLIBS)
 
 
 
 
 #RM is a built-in variable that defaults to "rm -f".
-clean :# If you use threads, add -pthread here.
-COMPILERFLAGS = -g -Wall -Wextra -Wno-sign-compare
-
-# Any libraries you might need linked in.
-# LINKLIBS = -lm
-
-# The components of each program. 
-SERVEROBJECTS = obj/http_server.o
-CLIENTOBJECTS = obj/http_client.o
-
-.PHONY: all clean
-
-all : obj http_server http_client
-
-http_server: $(SERVEROBJECTS)
-	$(CXX) $(COMPILERFLAGS) $^ -o $@ $(LINKLIBS)
-
-http_client: $(CLIENTOBJECTS)
-	$(CXX) $(COMPILERFLAGS) $^ -o $@ $(LINKLIBS)
-
 clean :
-	$(RM) obj/*.o http_server http_client
-
-# Note the change from src/%.c to src/%.cpp
-obj/%.o: src/%.cpp
-	$(CXX) $(COMPILERFLAGS) -c -o $@ $<
-
-obj:
-	mkdir -p obj
-
 	$(RM) obj/*.o http_server http_client
 
 #$<: the first dependency in the list; here, src/%.c. (Of course, we could also have used $^).
 #The % sign means "match one or more characters". You specify it in the target, and when a file
 #dependency is checked, if its name matches this pattern, this rule is used. You can also use the % 
 #in your list of dependencies, and it will insert whatever characters were matched for the target name.
-obj/%.o: src/%.c
-	$(CC) $(COMPILERFLAGS) -c -o $@ $<
+obj/%.o: src/%.cpp
+	$(CXX) $(COMPILERFLAGS) -c -o $@ $<
 obj:
 	mkdir -p obj
