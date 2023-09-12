@@ -57,24 +57,34 @@ void checkRequest(int client_fd, const std::string& request) {
 		//deciding the appropriate header 
         if (get_file) 
 		{
+			// Send just the header first
+			std::string header = "HTTP/1.1 200 OK\r\n\r\n";
+			if (send(client_fd, header.c_str(), header.size(), 0) == -1) {
+				perror("send");
+			}
             std::ostringstream content;
             content << get_file.rdbuf(); //reading in the content of the file
-            header = "HTTP/1.1 200 OK\n" + content.str() + "\n"; //add new line 
+            // Then send the content
+			if (send(client_fd, content.str().c_str(), content.str().size(), 0) == -1) {
+				perror("send");
+			}
         } 
 		else 
 		{
-            header = "HTTP/1.1 404 Not Found\n";
-			//question - does this also have content?
+            header = "HTTP/1.1 404 Not Found\r\n\r\n";
+			//send the http response back to the client 
+			if (send(client_fd, header.c_str(), header.size(), 0) == -1) {
+				perror("send");
+			}
         }
     } 
 	else //for example, if "POST" 
 	{
-        header = "HTTP/1.1 400 Bad Request\n";
-    }
-
-    //send the http response back to the client 
-    if (send(client_fd, header.c_str(), header.size(), 0) == -1) {
-        perror("send");
+        header = "HTTP/1.1 400 Bad Request\r\n\r\n";
+		//send the http response back to the client 
+		if (send(client_fd, header.c_str(), header.size(), 0) == -1) {
+			perror("send");
+		}
     }
 }
 
