@@ -1,0 +1,5 @@
+<<<<<<< HEAD
+This is for testing my makefile for c++. 
+=======
+This is for testing my makefile in c++, compiler errors.
+>>>>>>> cb0f896d98756906b23aae43ede1b8676eb8dc6c
